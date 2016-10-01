@@ -98,7 +98,7 @@ Vamos chamar o repositório de **djangotutorial**.
 Agora clone o projeto digitando
 
 ```bash
-git clone git@github.com:rg3915/djangotutorial.git
+git clone git@github.com:nome/djangotutorial.git
 cd djangotutorial
 ```
 
@@ -315,6 +315,15 @@ O que temos até aqui?
 
 ## Django funcionando em nível 0
 
+Declarando o app `core` em `settings.py`
+
+```python
+INSTALLED_APPS = [
+    # ...
+    'myproject.core',
+]
+```
+
 Criando a primeira migração
 
 ```bash
@@ -325,14 +334,108 @@ Rodando a aplicação
 
 ```bash
 manage runserver
+# ou
+# manage runserver 8080
 ```
 
+http://localhost:8000/
+
+![image](img/it_worked.png)
 
 
 
 ## Configurando o Django
 
-Editar o `settings.py`
+> **Importante:** nunca coloque sua `SECRET_KEY` no git.
+
+Vamos editar o `settings.py`.
+
+Extraia a `SECRET_KEY`, crie um arquivo `.env` na pasta principal e coloque-o lá.
+
+```bash
+touch .env
+```
+
+O `.env` vai ficar assim:
+
+```python
+SECRET_KEY=su4_s3cr3t_k3y_sup3r_s3cr3t4
+```
+
+**Note** que eu tirei as aspas simples e o espaço em branco entre o sinal de igual.
+
+E o `settings.py` vai ficar assim:
+
+```python
+from decouple import config, Csv
+
+SECRET_KEY = config('SECRET_KEY')
+```
+
+Repare que estamos usando o [python-decouple](https://github.com/henriquebastos/django-decouple). Para instala-lo digite
+
+```bash
+pip install python-decouple
+```
+
+Voltando ao `.env` façamos
+
+```python
+SECRET_KEY=su4_s3cr3t_k3y_sup3r_s3cr3t4
+DEBUG=True
+ALLOWED_HOSTS=127.0.0.1, .localhost
+```
+
+E o `settings.py`
+
+```python
+SECRET_KEY = config('SECRET_KEY')
+
+DEBUG = config('DEBUG', default=False, cast=bool)
+
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default=[], cast=Csv())
+```
+
+Configurando melhor o banco de dados
+
+```python
+from dj_database_url import parse as dburl
+
+default_dburl = 'sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
+DATABASES = {
+    'default': config('DATABASE_URL', default=default_dburl, cast=dburl),
+}
+```
+
+**Note** que estamos usando o [dj-database-url](https://github.com/kennethreitz/dj-database-url).
+
+```bash
+pip install dj-database-url
+```
+
+
+
+### .gitignore
+
+Antes de "commitar" nosso código digite `git status`.
+
+Repare que a pasta `.venv` e o `db.sqlite3` serão versionados, mas não deve.
+
+> **Boas práticas:** NÃO versione seu ambiente virtual e nem seu banco de dados.
+
+Vamos editar o `.gitignore`.
+
+```
+.venv
+*.sqlite3
+```
+
+Pronto! Agora você pode dar seu primeito `commit`.
+
+
+
+
+
 
 ## Explorando o Admin
 
