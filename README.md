@@ -186,7 +186,7 @@ python -m venv .venv
 
 ```bash
 source .venv/bin/activate
-# source .venv/Scripts/active # Windows
+# .venv/Scripts/activate.bat # Windows
 ```
 
 **Obs:** todos os pacotes instalados com o ambiente ativado serão instalados dentro do ambiente e visíveis somente nele.
