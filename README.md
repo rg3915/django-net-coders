@@ -7,21 +7,22 @@ Este foi um [Mini Curso de Django](http://www.meetup.com/NetCoders/events/234404
 ## Ementa
 
 * [Git](#git)
-* [1 min de Python](#)
-* [O que é Django e pra que serve?]
-* [Entendendo o Padrão MVC](#entendendo o padrão mvc)
-* [Ambiente Virtual de Desenvolvimento](#ambiente virtual de desenvolvimento)
+* [1 min de Python](#1-min-de-python)
+* [O que é Django e pra que serve?](#o-que-é-django-e-pra-que-serve)
+* [Entendendo o Padrão MVC](#entendendo-o-padrão-mvc)
+* [Ambiente Virtual de Desenvolvimento](#ambiente-virtual-de-desenvolvimento)
 * [Instalação](#instalação)
-* [Qual será Nosso Projeto?](#qual será nosso projeto?)
-* [Configurando o Django](#configurando o django)
-* [Explorando o Admin](#explorando o admin)
-* [Introdução aos Templates](#introdução aos templates)
-* [Entendendo o ORM do Django](#entendendo o orm do django)
-* [CRUD com Functions Based Views](#crud com functions based views)
-* [CRUD com Class Based Views](#crud com class based views)
-* [Templates Tags e Filtros](#templates tags e filtros)
-* [Várias formas de se fazer um formulário](#várias formas de se fazer um formulário)
-* [Deploy no Heroku](#deploy no heroku)
+* [Qual será Nosso Projeto?](#qual-será-nosso-projeto)
+* [Configurando o Django](#configurando-o-django)
+* [A view mais simples do mundo](#a-view-mais-simples-do-mundo)
+* [Explorando o Admin](#explorando-o-admin)
+* [Introdução aos Templates](##introdução-aos-templates)
+* [Entendendo o ORM do Django](#entendendo-o-orm-do-django)
+* [CRUD com Functions Based Views](#crud-com-functions-based-views)
+* [CRUD com Class Based Views](#crud-com-class-based-views)
+* [Templates Tags e Filtros](#templates-tags-e-filtros)
+* [Várias formas de se fazer um formulário](##várias-formas-de-se-fazer-um-formulário)
+* [Deploy no Heroku](#deploy-no-heroku)
 
 
 ## Objetivo
@@ -338,7 +339,7 @@ manage runserver
 # manage runserver 8080
 ```
 
-http://localhost:8000/
+[http://localhost:8000/](http://localhost:8000/)
 
 ![image](img/it_worked.png)
 
@@ -372,7 +373,7 @@ from decouple import config, Csv
 SECRET_KEY = config('SECRET_KEY')
 ```
 
-Repare que estamos usando o [python-decouple](https://github.com/henriquebastos/django-decouple). Para instala-lo digite
+Repare que estamos usando o [python-decouple](https://github.com/henriquebastos/python-decouple). Para instala-lo digite
 
 ```bash
 pip install python-decouple
@@ -431,6 +432,33 @@ Vamos editar o `.gitignore`.
 ```
 
 Pronto! Agora você pode dar seu primeito `commit`.
+
+```bash
+git add .
+git commit -m "First project"
+git push
+```
+
+## A view mais simples do mundo
+
+    .
+    |-- 
+    |-- myproject
+    |   |-- core
+    |   |   |-- ...
+    |   |   `-- views.py
+    |   |-- settings.py
+    |   |-- urls.py
+
+### Editando views.py
+
+```python
+code here
+```
+
+
+
+
 
 
 
