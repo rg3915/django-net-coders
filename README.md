@@ -1045,6 +1045,9 @@ Vamos editar:
 {% endblock content %}
 ```
 
+![image](img/lista.png)
+
+
 ### Visualizando os detalhes
 
 ```python
@@ -1105,10 +1108,104 @@ url(r'^movie/(?P<pk>\d+)/$', movie_detail, name='movie_detail'),
 {% endblock content %}
 ```
 
+![image](img/detalhes.png)
+
+http://getbootstrap.com/
+
+http://getbootstrap.com/examples/theme/
+
+http://www.layoutit.com/
 
 
 ## CRUD com Class Based Views
 
+https://docs.djangoproject.com/en/1.10/topics/class-based-views/
+
+https://ccbv.co.uk/
+
+**Leia**: "Django Class Based Views - o que são e por que usar" - Caio Carrara https://goo.gl/xnfqx1
+
+https://speakerdeck.com/cacarrara/django-class-based-views
+
+### Editando o vies.py para lista
+
+```python
+from django.views.generic import CreateView, ListView, DetailView
+
+
+class MovieList(ListView):
+    template_name = 'core/movie_list.html'
+    model = Movie
+    context_object_name = 'movies'
+
+    def get_queryset(self):
+        m = Movie.objects.all()
+        # Filme de maior bilheteria
+        if self.request.GET.get('great_movie', False):
+            q = Movie.objects.all().aggregate(Max('raised'))
+            m = Movie.objects.filter(raised=q['raised__max'])
+        return m
+
+
+class MovieDetail(DetailView):
+    template_name = 'core/movie_detail.html'
+    model = Movie
+```
+
+## Formulários
+
+### Editando o views.py para formulário
+
+```python
+from django.core.urlresolvers import reverse_lazy as r
+
+
+class MovieCreate(CreateView):
+    template_name = 'core/movie_form.html'
+    model = Movie
+    fields = '__all__'
+    success_url = r('core:movie_list')
+```
+
+### Refatorando o urls.py
+
+```python
+from django.conf.urls import url
+from myproject.core import views as c
+
+urlpatterns = [
+    url(r'^$', c.home, name='home'),
+    url(r'^movie/$', c.MovieList.as_view(), name='movie_list'),
+    url(r'^movie/(?P<pk>\d+)/$', c.MovieDetail.as_view(), name='movie_detail'),
+    url(r'^movie/add/$', c.MovieCreate.as_view(), name='movie_add'),
+]
+```
+
+### Editando movie_form.html
+
+![image](img/form.png)
+
+```html
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+  <form class="form-horizontal" action="." method="POST">
+      <legend>Cadastrar</legend>
+      {% csrf_token %}
+    {{ form.as_p }}
+
+    <div class="form-group">
+        <div class="col-sm-10 col-sm-offset-2">
+          <button type="submit" id="id_submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </div>
+  </form>
+</div>
+
+{% endblock content %}
+```
 
 
 ## Templates Tags e Filtros
