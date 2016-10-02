@@ -314,6 +314,8 @@ O que temos até aqui?
     |   `-- wsgi.py
     
 
+![image](img/diagrama.png)
+
 ## Django funcionando em nível 0
 
 Declarando o app `core` em `settings.py`
@@ -453,23 +455,104 @@ git push
 ### Editando views.py
 
 ```python
-code here
+# from django.shortcuts import render
+from django.http import HttpResponse
+
+
+def home(request):
+    return HttpResponse('<h1>Django</h1><h3>Bem-vindo ao .NET Coders!</h3>')
 ```
 
+### Editando urls.py
 
+```python
+from django.conf.urls import url
+from django.contrib import admin
+from myproject.core.views import home
 
+urlpatterns = [
+    url(r'^$', home),
+    url(r'^admin/', admin.site.urls),
+]
+```
 
-
-
-
+![image](img/HttpResponse.png)
 
 
 
 ## Explorando o Admin
 
+```bash
+manage createsuperuser --username='admin' --email=''
+```
+
+![image](img/admin1.png)
+
+![image](img/admin2.png)
+
 
 
 ## Introdução aos Templates
+
+### Editando o settings.py
+
+```python
+LANGUAGE_CODE = 'pt-br'
+
+TIME_ZONE = 'America/Sao_Paulo'
+
+LOGIN_URL = '/admin/login'
+```
+
+## Testes
+
+![image](img/teste03.png)
+
+
+### Teste: Verificar se existe a página *index.html*.
+
+```python
+from django.test import TestCase
+
+
+class HomeTest(TestCase):
+
+    def setUp(self):
+        self.resp = self.client.get('/')
+
+    def test_get(self):
+        ''' get / deve retornar status code 200. '''
+        self.assertEqual(200, self.resp.status_code)
+
+    def test_template(self):
+        ''' Home deve usar template index.html '''
+        self.assertTemplateUsed(self.resp, 'index.html')
+```
+
+**Leia**: "pytest: escreva menos, teste mais" - Erick Wilder de Oliveira - https://goo.gl/8E9FB1
+
+
+### Editando views.py
+
+```python
+from django.shortcuts import render
+# from django.http import HttpResponse
+
+# def home(request):
+#     return HttpResponse('<h1>Django</h1><h3>Bem-vindo ao .NET Coders!</h3>')
+
+def home(request):
+    return render(request, 'index.html')
+```
+
+### Criando o index.html
+
+Estando na pasta `venv` digite
+
+```bash
+mkdir -p core/templates
+echo "<html><body><h1>Tutorial Django</h1><h3>Bem-vindo ao .NET Coders.</h3></body></html>" > core/templates/index.html
+```
 
 
 
