@@ -1194,7 +1194,7 @@ urlpatterns = [
   <form class="form-horizontal" action="." method="POST">
       <legend>Cadastrar</legend>
       {% csrf_token %}
-    {{ form.as_p }}
+      {{ form.as_p }}
 
     <div class="form-group">
         <div class="col-sm-10 col-sm-offset-2">
@@ -1214,6 +1214,118 @@ urlpatterns = [
 
 ## Várias formas de se fazer um formulário
 
+Existem várias formas de se criar um formulário, qual deles eu uso?
+
+1. Fazendo tudo na mão com html puro
+
+```
+    {% extends "base.html" %}
+
+    {% block content %}
+
+    <div class="container">
+        <form class="form-horizontal" action="." method="POST">
+            <legend>Cadastrar</legend>
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_movie">Filme</label>
+                <input type="text" id="id_movie" name="movie" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="id_category">Categoria</label>
+                <input type="text" id="id_category" name="category" class="form-control" placeholder="Tem que usar select">
+            </div>
+
+            <!-- ... -->
+
+            <div class="form-group">
+              <div class="col-sm-10 col-sm-offset-2">
+                <button type="submit" id="id_submit" class="btn btn-primary">Salvar</button>
+              </div>
+            </div>
+        </form>
+    </div>
+
+    {% endblock content %}
+```
+
+
+2. Usando as tags do Django
+
+```
+    {{ form }}
+
+    {{ form.as_p }}
+
+    {{ form.as_ul }}
+
+    {{ form.as_table }}
+```
+
+Nosso formulário
+
+    {% extends "base.html" %}
+
+    {% block content %}
+        <form action="" method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+        </form>
+    {% endblock content %}
+
+
+
+3. Usando {{ field.label }} e {{ field }}
+
+```
+    {% for field in form %}
+      <div class="form-group">
+        <div class="control-label col-sm-2">
+          {{ field.errors }}
+          {{ field.label }}
+        </div>
+        <div class="col-sm-2">
+          {{ field }}
+        </div>
+      </div>
+    {% endfor %}
+```
+
+
+4. Usando bibliotecas como o django-bootstrap-form
+
+```
+    {% extends "base.html" %}
+
+    {% load bootstrap %}
+
+    {% block content %}
+
+    <div class="container">
+        <form class="form-horizontal" action="." method="POST">
+            <legend>Cadastrar</legend>
+            {% csrf_token %}
+            {{ form.movie|bootstrap_horizontal }}
+            {{ form.category|bootstrap_horizontal }}
+            {{ form.distributor|bootstrap_horizontal }}
+            {{ form.raised|bootstrap_horizontal }}
+            {{ form.liked|bootstrap_horizontal }}
+            {{ form.release|bootstrap_horizontal }}
+
+            <div class="form-group">
+              <div class="col-sm-10 col-sm-offset-2">
+                <button type="submit" id="id_submit" class="btn btn-primary">Salvar</button>
+              </div>
+            </div>
+        </form>
+    </div>
+
+    {% endblock content %}
+```
+
+![image](img/form4.png)
 
 
 ## Deploy no Heroku
