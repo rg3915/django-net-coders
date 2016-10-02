@@ -632,7 +632,7 @@ python manage.py migrate
 
 Explorando um pouco as queryset.
 
-```python
+```bash
 $ python manage.py shell
 Python 3.5.0 (default, Dec  8 2015, 01:17:16) 
 [GCC 4.8.4] on linux
@@ -711,7 +711,7 @@ mkdir shell
 touch shell/{categorys.py,distributors.py,movies.py}
 ```
 
-Veja o código de cada arquivo em [shell/]().
+Veja o código de cada arquivo em [shell/](shell/).
 
 Para rodar o script façamos
 
