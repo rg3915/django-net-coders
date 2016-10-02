@@ -614,7 +614,7 @@ class Movie(models.Model):
         return self.movie
 
     def get_absolute_url(self):
-        return r('movie_detail', kwargs={'pk': self.pk})
+        return r('core:movie_detail', kwargs={'pk': self.pk})
 ```
 
 
@@ -1044,6 +1044,67 @@ Vamos editar:
 
 {% endblock content %}
 ```
+
+### Visualizando os detalhes
+
+```python
+from django.shortcuts import render, get_object_or_404
+
+
+def movie_detail(request, pk):
+    movie = get_object_or_404(Movie, pk=pk)
+    context = {'movie': movie}
+    return render(request, 'core/movie_detail.html', context)
+```
+
+#### urls.py
+
+```python
+url(r'^movie/(?P<pk>\d+)/$', movie_detail, name='movie_detail'),
+```
+
+#### movie_detail.html
+
+```html
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <ul class="breadcrumb">
+        <li><a href="{% url 'core:movie_list' %}">Filmes</a> <span class="divider"></span></li>
+        <li class="active">{{ movie.movie }}</li>
+      </ul>
+
+      <div class="col-sm-6 col-md-4">
+        <div class="list-group">
+          <h1>
+            {{ movie.movie}}
+            {% if movie.liked %}
+              <td><span class="pull-right glyphicon glyphicon-ok-sign" style="color: #44AD41"></span></td>
+            {% else %}
+              <td><span class="pull-right glyphicon glyphicon-minus-sign" style="color: #DE2121"></span></td>
+            {% endif %}
+          </h1>
+          <div class="list-group-item">
+            <h4>{{ movie.category }}</h4>
+          </div>
+          <div class="list-group-item">
+            <h4>{{ movie.distributor }}</h4>
+          </div>
+          <div class="list-group-item">
+            <h3>U$ {{ movie.raised }}</h3>
+          </div>
+          <div class="list-group-item">
+            <h4>{{ movie.release|date:"d/m/Y" }}</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+```
+
 
 
 ## CRUD com Class Based Views
