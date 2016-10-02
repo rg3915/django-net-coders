@@ -568,6 +568,7 @@ Explorando o [layoutit](http://www.layoutit.com/)
 
 ```python
 from django.db import models
+from django.core.urlresolvers import reverse_lazy as r
 
 
 class Distributor(models.Model):
@@ -611,6 +612,9 @@ class Movie(models.Model):
 
     def __str__(self):
         return self.movie
+
+    def get_absolute_url(self):
+        return r('movie_detail', kwargs={'pk': self.pk})
 ```
 
 
@@ -801,6 +805,245 @@ Movie.objects.filter(raised=q['raised__max'])
 
 ## CRUD com Functions Based Views
 
+### Views.py
+
+```python
+from django.shortcuts import render
+from .models import Movie
+
+
+def movie_list(request):
+    movies = Movie.objects.all()
+    context = {'movies': movies}
+    return render(request, 'core/movie_list.html', context)
+```
+
+### urls.py
+
+```bash
+touch core/urls.py
+```
+
+Editando `core/urls.py`
+
+```python
+from django.conf.urls import url
+from .views import home, movie_list
+
+urlpatterns = [
+    url(r'^$', home, name='home'),
+    url(r'^movie/$', movie_list, name='movie_list'),
+]
+```
+
+Refatorando `urls.py`
+
+```python
+from django.conf.urls import include, url
+from django.contrib import admin
+
+urlpatterns = [
+    url(r'', include('myproject.core.urls', namespace='core')),
+    url(r'^admin/', admin.site.urls),
+]
+```
+
+### Criando os templates
+
+```bash
+mkdir core/templates/core
+touch core/templates/{base.html,menu.html}
+touch core/templates/core/{movie_list.html,movie_detail.html,movie_form.html}
+```
+
+Temos
+
+    core
+    ├── admin.py
+    ├── models.py
+    ├── templates
+    │   ├── base.html
+    │   ├── index.html
+    │   ├── menu.html
+    │   └── core
+    │       ├── movie_detail.html
+    │       ├── movie_form.html
+    │       └── movie_list.html
+    ├── tests.py
+    └── views.py
+
+
+#### Variáveis
+
+Acessando objetos
+
+```python
+{{ objeto}}
+```
+
+Acessando atributos
+
+```python
+{{ objeto.atributo }}
+```
+
+Tags
+
+```python
+{% tags %}
+```
+
+Exemplo:
+
+```python
+{% if condicao %}
+  <!-- algum comando -->
+{% endif %}
+
+{% for item in objeto %}
+  {{ item.atributo }}
+{% endfor %}
+```
+
+Vamos editar:
+
+**menu.html**
+
+```html
+<!-- Menu -->
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="current"><a href="{% url 'core:home' %}"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+        <li><a href="{% url 'core:movie_list' %}"><span class="glyphicon glyphicon-film"></span> Filmes</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="{% url 'admin:index' %}">Admin</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+```
+
+**base.html**
+
+```html
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="https://www.djangoproject.com/favicon.ico">
+
+
+    {% block title %}
+      <title>Filmes</title>
+    {% endblock title %}
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+      /* Move down content because we have a fixed navbar that is 50px tall */
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+        /*color: #5a5a5a;*/
+      }
+    </style>
+
+  </head>
+  <body>
+
+    {% include "menu.html" %}
+
+    {% block content %}{% endblock content %}
+  </body>
+</html>
+```
+
+
+
+### Herança de templates
+
+**index.html**
+
+```html
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container">
+    <div class="jumbotron">
+      <h1>Tutorial Django</h1>
+      <h3>Bem-vindo ao .NET Coders!</h3>
+    </div>
+  </div>
+{% endblock content %}
+```
+
+**movie_list.html**
+
+```html
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+  <div class="page-header">
+      <a class="btn btn-primary pull-right" href="{% url 'core:movie_add' %}"><i class="glyphicon glyphicon-plus"></i> Adicionar filme</a>
+    <h2><a href="?great_movie=1">Filme de maior bilheteria</a></h2>
+  </div>
+
+  {% if movies %}
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Filme</th>
+          <th>Categoria</th>
+          <th>Distribuidor</th>
+          <th>Bilheteria (bilhões)</th>
+          <th>Lançamento</th>
+          <th>Gostou</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for movie in movies %}
+          <tr>
+            <td><a href="{{ movie.get_absolute_url }}">{{ movie.movie }}</a></td>
+            <td>{{ movie.category }}</td>
+            <td>{{ movie.distributor }}</td>
+            <td>U$ {{ movie.raised }}</td>
+            <td>{{ movie.release|date:"d/m/Y" }}</td>
+            {% if movie.liked %}
+              <td><span class="glyphicon glyphicon-ok-sign" style="color: #44AD41"></span></td>
+            {% else %}
+              <td><span class="glyphicon glyphicon-minus-sign" style="color: #DE2121"></span></td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+  {% else %}
+    <p class="alert alert-warning">Sem itens na lista.</p>
+  {% endif %}
+
+</div>
+
+{% endblock content %}
+```
 
 
 ## CRUD com Class Based Views
