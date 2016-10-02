@@ -554,6 +554,11 @@ mkdir -p core/templates
 echo "<html><body><h1>Tutorial Django</h1><h3>Bem-vindo ao .NET Coders.</h3></body></html>" > core/templates/index.html
 ```
 
+Explorando o [layoutit](http://www.layoutit.com/)
+
+
+
+
 ## Editando models.py
 
 **Básico**: Filmes
@@ -609,13 +614,13 @@ class Movie(models.Model):
 ```
 
 
-## Tipos de campos
+### Tipos de campos
 
-https://docs.djangoproject.com/en/1.8/ref/models/fields/
+https://docs.djangoproject.com/en/1.10/ref/models/fields/
 
 
 
-## Atualizando o banco
+### Atualizando o banco
 
 ```bash
 python manage.py makemigrations
@@ -623,9 +628,80 @@ python manage.py migrate
 ```
 
 
-
-
 ## Entendendo o ORM do Django
+
+Explorando um pouco as queryset.
+
+```python
+$ python manage.py shell
+Python 3.5.0 (default, Dec  8 2015, 01:17:16) 
+[GCC 4.8.4] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+(InteractiveConsole)
+>>>
+```
+
+Precisamos importar o models.
+
+```python
+>>> from myproject.core.models import Distributor, Category, Movie
+>>> import datetime
+>>> Distributor.objects.create(distributor='Disney')
+>>> Category.objects.create(category='ação')
+>>> category = Category.objects.get(category='ação')
+distributor = Distributor.objects.get(distributor__icontains='disney')
+Movie.objects.create(
+    movie='Os Vingadores',
+    category=category,
+    distributor=distributor,
+    raised=1.519,
+    release=datetime.date(2012, 4, 27)
+)
+```
+
+
+https://docs.djangoproject.com/en/1.10/ref/models/querysets/
+
+https://pt.wikipedia.org/wiki/Lista_de_filmes_de_maior_bilheteria
+
+
+### Admin novamente
+
+```python
+from django.contrib import admin
+from .models import Distributor, Category, Movie
+
+
+admin.site.register(Distributor)
+admin.site.register(Category)
+admin.site.register(Movie)
+```
+
+
+### Turbinando o shell com iPython e django extensions
+
+```bash
+pip install django-extensions
+```
+
+Em `settings.py`
+
+```python
+INSTALLED_APPS = [
+    # ...
+    # thirty apps
+    'django_extensions',
+    # ...
+]
+```
+
+Agora podemos digitar
+
+```bash
+manage shell_plus
+```
+
+
 
 
 
