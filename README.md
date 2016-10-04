@@ -136,6 +136,11 @@ for i in lista:
 
 for i in range(10):
     print(i)
+
+class Veiculo(object):
+
+    def ligar_motor(self):
+        self.ligado = True
 ```
 
 
