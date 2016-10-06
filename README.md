@@ -137,6 +137,7 @@ for i in lista:
 for i in range(10):
     print(i)
 
+
 class Veiculo(object):
 
     def ligar_motor(self):
@@ -554,6 +555,7 @@ def home(request):
 Estando na pasta `venv` digite
 
 ```bash
+cd myproject
 mkdir -p core/templates
 echo "<html><body><h1>Tutorial Django</h1><h3>Bem-vindo ao .NET Coders.</h3></body></html>" > core/templates/index.html
 ```
@@ -665,6 +667,9 @@ Movie.objects.create(
     raised=1.519,
     release=datetime.date(2012, 4, 27)
 )
+>>> m = Movie.objects.all()
+>>> m
+>>> print(m.query)
 ```
 
 
@@ -882,7 +887,7 @@ Temos
 Acessando objetos
 
 ```python
-{{ objeto}}
+{{ objeto }}
 ```
 
 Acessando atributos
