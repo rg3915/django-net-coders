@@ -2,6 +2,8 @@
 
 Este foi um [Mini Curso de Django](http://www.meetup.com/NetCoders/events/234404331/) realizado pelo [.NET Coders](http://blog.netcoders.com.br/) em 09 de Outubro de 2016.
 
+[Links](links.md)
+
 ![image](img/logo_mascote.jpg)
 
 ## Ementa
@@ -1491,6 +1493,8 @@ m = Movie.objects.filter(raised=q['raised__max'])
 m.values()
 m[0].movie, m[0].raised
 ```
+
+[Links](links.md)
 
 Participem do [Grupy-SP](www.meetup.com/pt-BR/Grupy-SP/)
 
