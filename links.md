@@ -115,7 +115,7 @@ http://getbootstrap.com/
 
 [Construa um E-Commerce com Python 3 e Django by @GilenoFilho](http://bit.ly/2duS45N)
 
-[Python para Zumbis -](https://goo.gl/swsHmw)
+[Python para Zumbis by @fmasanori](https://goo.gl/swsHmw)
 
 [CodingEntrepreneurs Try Django 1.9 -](http://youtu.be/yfgsklK_yFo)
 
