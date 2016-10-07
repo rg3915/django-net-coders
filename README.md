@@ -1339,7 +1339,122 @@ Nosso formulário
 
 ## Deploy no Heroku
 
+* Criar conta no Heroku
+* Instalar [Heroku Toolbelt](https://devcenter.heroku.com/articles/heroku-command-line)
+* no terminal digite `heroku`
 
+```bash
+heroku login
+heroku --version
+```
+
+Nós temos um projeto, mas podemos ter várias instâncias. Então precisamos separar os elementos da instância.
+
+```bash
+pip install python-decouple
+```
+
+Lê as configurações da instância a partir das variáveis de ambiente do sistema a partir do arquivo `.env`.
+
+```bash
+pip install dj-database-url
+```
+
+Configurar os arquivos estáticos, em `settins.py` digite
+
+```python
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+```
+
+
+O `dj-static` que servirá os arquivos, pois o Django não faz isso.
+
+Configurar `wsgi.py`
+
+```python
+from dj_static import Cling
+
+...
+
+application = Cling(get_wsgi_application())
+```
+
+```bash
+pip freeze > requirements.txt
+```
+
+Inserir em `requirements.txt`
+
+```
+gunicorn==19.4.1
+psycopg2==2.6.1
+```
+
+O gunicorn é o servidor de aplicação.
+
+E o psycopg2 é o drive do Postgres para o Python.
+
+Crie o arquivo `Procfile`
+
+```bash
+echo "web: gunicorn myproject.wsgi --log-file -" > Procfile
+```
+
+E `runtime.txt`
+
+```bash
+echo python-3.5.2 > runtime.txt
+```
+
+Suba as alterações para o GitHub
+
+```bash
+git status
+git add .
+git commit -m "Configurações para Heroku"
+git push
+```
+
+Crie uma app no Heroku
+
+```bash
+heroku apps:create djangotutorial-regis
+```
+
+Veja o novo repositório
+
+```bash
+git remote -v
+```
+
+Primeiro enviamos as configurações para o Heroku
+
+```bash
+heroku config
+heroku config:push
+heroku config
+git push heroku master --force
+heroku open
+```
+
+https://github.com/xavdid/heroku-config
+
+```bash
+heroku plugins:install heroku-config
+```
+
+Se não der certo use a configuração manual
+
+```bash
+heroku config:set SECRET_KEY=su4_s3cr3t_k3y_sup3r_s3cr3t4
+heroku config:set DEBUG=False
+heroku config:set ALLOWED_HOSTS=127.0.0.1, .localhost
+```
+
+```bash
+heroku config
+heroku open
+```
 
 
 ## Livros
