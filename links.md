@@ -48,7 +48,7 @@
 
 [Django QuerySet API reference](https://docs.djangoproject.com/en/1.10/ref/models/querysets/)
 
-[Lista de filmes de maior bilheteria]([https://pt.wikipedia.org/wiki/Lista_de_filmes_de_maior_bilheteria)
+[Lista de filmes de maior bilheteria](https://pt.wikipedia.org/wiki/Lista_de_filmes_de_maior_bilheteria)
 
 http://getbootstrap.com/
 
