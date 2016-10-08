@@ -2,6 +2,8 @@
 
 Este foi um [Mini Curso de Django](http://www.meetup.com/NetCoders/events/234404331/) realizado pelo [.NET Coders](http://blog.netcoders.com.br/) em 09 de Outubro de 2016.
 
+Entrar aqui: https://rg3915.github.io/django-net-coders/
+
 [Links](links.md)
 
 ![image](img/logo_mascote.jpg)
