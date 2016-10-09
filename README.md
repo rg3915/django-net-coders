@@ -1452,7 +1452,7 @@ Se não der certo use a configuração manual
 ```bash
 heroku config:set SECRET_KEY=su4_s3cr3t_k3y_sup3r_s3cr3t4
 heroku config:set DEBUG=False
-heroku config:set ALLOWED_HOSTS=127.0.0.1, .localhost
+heroku config:set ALLOWED_HOSTS="127.0.0.1, .localhost"
 ```
 
 ```bash
