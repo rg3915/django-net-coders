@@ -1140,7 +1140,7 @@ https://ccbv.co.uk/
 
 https://speakerdeck.com/cacarrara/django-class-based-views
 
-### Editando o vies.py para lista
+### Editando o views.py para lista
 
 ```python
 from django.views.generic import CreateView, ListView, DetailView
