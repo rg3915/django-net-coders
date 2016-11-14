@@ -180,6 +180,8 @@ https://www.djangosites.org/
 
 ![image](img/mtv1.png)
 
+Veja o processo de um *request* e *response*.
+
 <img src="img/mtv2.png" alt="image" style="width: 500px;"/>
 
 
@@ -585,11 +587,13 @@ class Distributor(models.Model):
     distributor = models.CharField('distribuidor', max_length=50, unique=True)
 
     class Meta:
+        ''' É uma classe Builtin do Django com recursos adicionais '''
         ordering = ['distributor']
         verbose_name = 'distribuidor'
         verbose_name_plural = 'distribuidores'
 
     def __str__(self):
+        ''' Retorna o distributor ao invés de 'Distributor.object' '''
         return self.distributor
 
 
@@ -616,6 +620,8 @@ class Movie(models.Model):
     release = models.DateTimeField(u'lançamento')
 
     class Meta:
+        ''' O sinal de menos ordena a data de forma decrescente, ou seja,
+        mais recente primeiro. '''
         ordering = ['-release']
         verbose_name = 'filme'
         verbose_name_plural = 'filmes'
@@ -626,6 +632,12 @@ class Movie(models.Model):
     def get_absolute_url(self):
         return r('core:movie_detail', kwargs={'pk': self.pk})
 ```
+
+Note que `get_absolute_url` usa `reverse_lazy`, que no caso foi renomeado através de um *alias* para `r`.
+
+Note também que `'core:movie_detail'` é o `namespace` e `name` da url respectivamente.
+
+> Nota: caso dê algum erro, comente esta função temporariamente.
 
 
 ### Tipos de campos
@@ -741,23 +753,30 @@ manage shell < shell/movies.py
 Leia mais
 
 ```python
-from core.models import Distributor, Category, Movie
+from myproject.core.models import Distributor, Category, Movie
 import datetime
+
+# Podemos criar uma instância do objeto e depois salvar.
 obj = Distributor(distributor='Paramount Pictures')
 obj.save()
 
+# Veja um exemplo de como criar um Distributor diretamente.
 Distributor.objects.create(distributor='Universal Pictures')
 Distributor.objects.create(distributor='Walt Disney Pictures')
 
 CATEGORY_LIST = ['ação', 'animação', 'aventura', 'comedia', 'guerra', 'suspense']
+# Usando um List Comprehension podemos definir todos os objetos a serem
+# inseridos no Django
 obj = [Category(category=val) for val in CATEGORY_LIST]
+# O comando bulk_create é muito rápido!
 Category.objects.bulk_create(obj)
 
+# O comando get "pega" um objeto
 category = Category.objects.get(category='ação')
 distributor = Distributor.objects.get(distributor__istartswith='Warner')
 Movie.objects.create(
     movie='O Exterminador do Futuro',
-    category=category,
+    category=category,  # para ser usado aqui
     distributor=distributor,
     raised=1.756,
     release=datetime.date(1984, 10, 26)
@@ -773,7 +792,7 @@ Movie.objects.create(
     release=datetime.date(2012, 3, 23)
 )
 
-q = Movie.objects.all()
+q = Movie.objects.all()  # listando todos os filmes
 q.count()
 q
 q.values()  # dicionario
@@ -782,20 +801,22 @@ q.values_list()  # lista
 for i in q.values():
     print(i)
 
+# Experimente
 for i in q:
     i.movie, i.category, i.raised
 
-dir(q)
+dir(q)  # veja todas as opções do objeto.
 
+# Exemplos de filtro
 Movie.objects.filter(category='ação')  # retorna erro
 Movie.objects.filter(category__category='ação')
 Movie.objects.filter(distributor__distributor__icontains='gate')
 
-
+# Exemplo de update
 Movie.objects.filter(movie__icontains='Exterminador').update(
     movie='O Exterminador do Futuro: Gênesis', release=datetime.date(2015, 7, 1))
 
-
+# Exemplo de delete
 Movie.objects.filter(id=1).delete()
 # Customer.objects.all().delete() # perigoso
 t = Movie.objects.get(movie='Titanic')
@@ -865,8 +886,8 @@ urlpatterns = [
 
 ```bash
 mkdir core/templates/core
-touch core/templates/{base.html,menu.html}
-touch core/templates/core/{movie_list.html,movie_detail.html,movie_form.html}
+touch core/templates/{base,menu}.html
+touch core/templates/core/{movie_list,movie_detail,movie_form}.html
 ```
 
 Temos
@@ -1058,6 +1079,10 @@ Vamos editar:
 {% endblock content %}
 ```
 
+**Atenção:** provavelmente vai dar erro em `href="{% url 'core:movie_add' %}"` porque a url não existe ainda. Deixe `href` vazio temporariamente.
+
+Talvez dê erro em `href="{{ movie.get_absolute_url }}"` também.
+
 ![image](img/lista.png)
 
 
@@ -1078,6 +1103,8 @@ def movie_detail(request, pk):
 ```python
 url(r'^movie/(?P<pk>\d+)/$', movie_detail, name='movie_detail'),
 ```
+
+Agora você pode voltar com `href="{{ movie.get_absolute_url }}"`.
 
 #### movie_detail.html
 
@@ -1144,6 +1171,7 @@ https://speakerdeck.com/cacarrara/django-class-based-views
 
 ```python
 from django.views.generic import CreateView, ListView, DetailView
+from django.db.models import Max
 
 
 class MovieList(ListView):
@@ -1307,7 +1335,28 @@ Nosso formulário
 ```
 
 
-4 - Usando bibliotecas como o django-bootstrap-form
+4 - Usando bibliotecas como o [django-bootstrap-form](https://github.com/tzangms/django-bootstrap-form)
+
+Antes digite
+
+```bash
+pip install django-bootstrap-form
+```
+
+E em `settings.py`, em `INSTALLED_APPS` insira `'bootstrapform',`.
+
+```python
+INSTALLED_APPS = [
+    # ...
+    # thirty apps
+    # ...
+    'bootstrapform',
+    # my apps
+    'myproject.core',
+]
+```
+
+Editando o formulário
 
 ```
 {% extends "base.html" %}
@@ -1495,6 +1544,96 @@ m = Movie.objects.filter(raised=q['raised__max'])
 m.values()
 m[0].movie, m[0].raised
 ```
+
+## Extra
+
+### Refatorando o Admin.py
+
+```python
+from django.contrib import admin
+from myproject.core.models import Distributor, Category, Movie
+
+
+@admin.register(Movie)
+class MovieAdmin(admin.ModelAdmin):
+    search_fields = ('movie', 'distributor__distributor')
+    list_display = ('movie', 'distributor')
+
+
+admin.site.register(Distributor)
+admin.site.register(Category)
+```
+
+https://docs.djangoproject.com/en/1.10/ref/contrib/admin/#modeladmin-options
+
+### Arquivos estáticos
+
+Vamos criar algumas pastas
+
+```bash
+mkdir -p core/static/{css,img,js}
+```
+
+Em `css` vamos criar um `main.css`
+
+```bash
+touch core/static/css/main.css
+```
+
+Seu conteúdo será
+
+```css
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+```
+
+Baixe uma imagem bem bonita e coloque em `img`. Eu escolhi essa:
+
+![background](http://i.imgur.com/XebTa9B.png)
+
+Agora vamos refatorar `base.html`. Troque `<style>...</style>` por
+
+```html
+<link rel="stylesheet" href="{% static 'css/main.css' %}">
+```
+
+Em `main.css` acrescente
+
+```css
+#image {
+    width: 200px;
+}
+```
+
+E em `index.html` acrescente
+
+```html
+<div class="pull-right">
+  <img id="image" src="{% static 'img/XebTa9B.png' %}" alt="">
+</div>
+```
+
+O `index.html` vai ficar assim:
+
+```html
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+  <div class="container">
+    <div class="jumbotron">
+      <div class="pull-right">
+        <img id="image" src="{% static 'img/XebTa9B.png' %}" alt="">
+      </div>
+      <h1>Tutorial Django</h1>
+      <h3>Bem-vindo ao .NET Coders!</h3>
+    </div>
+  </div>
+{% endblock content %}
+```
+
 
 [Links](links.md)
 
