@@ -6,11 +6,13 @@ class Distributor(models.Model):
     distributor = models.CharField('distribuidor', max_length=50, unique=True)
 
     class Meta:
+        ''' É uma classe Builtin do Django com recursos adicionais '''
         ordering = ['distributor']
         verbose_name = 'distribuidor'
         verbose_name_plural = 'distribuidores'
 
     def __str__(self):
+        ''' Retorna o distributor ao invés de 'Distributor.object' '''
         return self.distributor
 
 
@@ -37,6 +39,8 @@ class Movie(models.Model):
     release = models.DateTimeField(u'lançamento')
 
     class Meta:
+        ''' O sinal de menos ordena a data de forma decrescente, ou seja,
+        mais recente primeiro. '''
         ordering = ['-release']
         verbose_name = 'filme'
         verbose_name_plural = 'filmes'
